@@ -20,7 +20,7 @@ jobs:
           go-version: 1.15
       - name: Get dependencies
         run: |
-          sudo curl -sfL https://install.goreleaser.com/github.com/caarlos0/svu.sh | bash -s -- -b /usr/local/bin
+          sudo curl -sfL https://install.goreleaser.com/github.com/caarlos0/svu.sh | sudo bash -s -- -b /usr/local/bin
           git tag "$(svu next)"
           git push --tags
       -

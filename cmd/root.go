@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/spf13/cobra"
 
@@ -43,13 +44,22 @@ The aim is to make this a cross OS specific utility to help anyone`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		toGetAllArgs := os.Args[1:]
+		setNamespacecmd := exec.Command("kubectl", toGetAllArgs...)
+		setNamespacecmd.Stdout = os.Stdout
+		setNamespacecmd.Stderr = os.Stderr
+		if err := setNamespacecmd.Run(); err != nil {
+			if exitError, ok := err.(*exec.ExitError); ok {
+				os.Exit(exitError.ExitCode())
+			}
+		}
 		os.Exit(1)
 	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.SilenceErrors = true
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
